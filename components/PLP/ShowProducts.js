@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import Product from "../reusable/product";
+import Product from "../reusable/Product";
 
-export default function ShowProducts() {
-  const [products, setProducts] = useState([]);
-
+export default function ShowProducts({ products }) {
   const productList = [
     {
       pid: "3fd0124f",
@@ -107,48 +104,29 @@ export default function ShowProducts() {
     },
   ];
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
-    try {
-      const res = await fetch(
-        "https://devapi.agnicart.com/api/stores/1f0bcd4b/products/"
-      );
-      if (!res.ok)
-        throw new Error("Something went wrong with fetching products");
-      const data = await res.json();
-      setProducts(data.results);
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.log(error.message);
-      }
-    }
-  }
-
   return (
     <div className="w-full mx-auto col-span-3">
-      <div className=" grid grid-cols-1 lg:grid-cols-4 gap-4 ">
-        {products.map((product, i) => {
-          const productValues = productList.find(
-            (productItem) => product.uid === productItem.pid
-          );
-          console.log(productValues);
+      <div className=" grid grid-cols-1 lg:grid-cols-4 gap-4 overflow-y-auto no-scrollbar max-h-screen ">
+        {products &&
+          products.length > 0 &&
+          products.map((product, i) => {
+            const productValues = productList.find(
+              (productItem) => product.uid === productItem.pid
+            );
 
-          return (
-            <Product
-              key={product.uid}
-              id={product.uid}
-              title="Agni Originals"
-              description={product.slug}
-              price={product.price}
-              reference_price={product.reference_price}
-              img={productValues.img}
-              ratingCount={productValues.ratingCount}
-            />
-          );
-        })}
+            return (
+              <Product
+                key={product.uid}
+                id={product.uid}
+                title="Agni Originals"
+                description={product.slug}
+                price={product.price}
+                reference_price={product.reference_price}
+                img={product.featured_image_resized}
+                ratingCount={productValues.ratingCount}
+              />
+            );
+          })}
       </div>
     </div>
   );
