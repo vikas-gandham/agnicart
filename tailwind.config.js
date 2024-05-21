@@ -34,7 +34,7 @@ module.exports = {
             border: "1px solid white",
           },
         },
-        ".no-scrollbar::-webkit-scroobar": {
+        ".no-scrollbar::-webkit-scrollbar": {
           display: "none",
         },
         ".no-scrollbar": {

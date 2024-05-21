@@ -2,8 +2,16 @@ import { CiHeart } from "react-icons/ci";
 import { IoStar } from "react-icons/io5";
 
 export default function Product(props) {
-  const { id, title, description, price, reference_price, img, ratingCount } =
-    props;
+  const {
+    id,
+    title,
+    description,
+    price,
+    reference_price,
+    img,
+    rating,
+    ratingCount,
+  } = props;
 
   return (
     <div
@@ -28,10 +36,14 @@ export default function Product(props) {
         </strike>
       </div>
       <div>
-        <span className=" flex items-center justify-center gap-1 border border-white bg-white px-2 py-1 rounded-full bottom-32 right-3 absolute ">
-          <IoStar color="#ffc107" />
-          {ratingCount}
-        </span>
+        {rating && (
+          <span className=" flex items-center justify-center gap-1 border border-white bg-white px-2 py-1 rounded-full bottom-32 right-3 absolute ">
+            {Array.from({ length: rating }, (i) => (
+              <IoStar color="#ffc107" />
+            ))}
+            {ratingCount}
+          </span>
+        )}
       </div>
       <span className="border border-white bg-white px-1 py-1 rounded-full top-2 right-4 absolute ">
         <CiHeart size="1.5rem" />

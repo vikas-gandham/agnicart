@@ -2,7 +2,7 @@ import Accordion from "../reusable/Accordian";
 
 export default function Filters({ filters }) {
   return (
-    <div className=" overflow-y-auto scrollbar-thin max-h-screen  ">
+    <div className=" sticky top-10  ">
       {filters &&
         filters.length > 0 &&
         filters.map((filter) => (
