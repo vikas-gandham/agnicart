@@ -3,8 +3,25 @@ import { useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Accordion({ title, options, filter }) {
+  const router = useRouter();
+
+  const handleFilterClick = (id) => {
+    const query = { ...router.query };
+
+    query[id] = !query[id];
+
+    if (!query[id]) {
+      delete query[id];
+    }
+
+    router.push(`/filter?id=${id}`, undefined, {
+      shallow: true,
+    });
+  };
+
   const [toggle, setToggle] = useState(true);
   return (
     <div className="  flex-col flex gap-3 bg-white py-3 px-4 border-b  border-slate-600 relative   ">
@@ -69,8 +86,8 @@ function Accordion({ title, options, filter }) {
             <div className="flex flex-col  items-start justify-center gap-4 overflow-y-auto max-h-[150px] w-full scrollbar-thin scrollbar-webkit pt-48 pb-2">
               {options.map((filterItem) => (
                 <div key={filterItem.id}>
-                  <Link
-                    href={`/filter?id=${filterItem.id}`}
+                  <label
+                    onClick={() => handleFilterClick(filterItem.id)}
                     className="flex items-center justify-start gap-2 "
                   >
                     <input type="checkbox" />
@@ -80,7 +97,7 @@ function Accordion({ title, options, filter }) {
                     <h1 className="font-semibold text-slate-600">
                       &#40;{filterItem.id}&#41;
                     </h1>
-                  </Link>
+                  </label>
                 </div>
               ))}
             </div>
@@ -136,18 +153,19 @@ function Accordion({ title, options, filter }) {
                   key={filterItem.id}
                   className="flex items-center justify-start gap-2 "
                 >
-                  <Link
-                    href={`/filter?id=${filterItem.id}`}
-                    className="flex items-center justify-start gap-2 "
+                  <label
+                    onClick={() => handleFilterClick(filterItem.id)}
+                    className="flex items-center justify-start gap-2 cursor-pointer "
                   >
                     <input type="checkbox" />
-                    <h1 className=" uppercase font-semibold text-slate-600">
+
+                    <span className=" uppercase font-semibold text-slate-600">
                       {filterItem.name}
-                    </h1>
-                    <h1 className="font-semibold text-slate-600">
+                    </span>
+                    <span className="font-semibold text-slate-600">
                       &#40;{filterItem.id}&#41;
-                    </h1>
-                  </Link>
+                    </span>
+                  </label>
                 </div>
               ))}
             </div>
@@ -166,8 +184,8 @@ function Accordion({ title, options, filter }) {
                   key={filterItem.id}
                   className="flex items-center justify-start gap-2 "
                 >
-                  <Link
-                    href={`/filter?id=${filterItem.id}`}
+                  <label
+                    onClick={() => handleFilterClick(filterItem.id)}
                     className="flex items-center justify-start gap-2 "
                   >
                     <input type="checkbox" />
@@ -177,7 +195,7 @@ function Accordion({ title, options, filter }) {
                     <h1 className="font-semibold text-slate-600">
                       &#40;{filterItem.id}&#41;
                     </h1>
-                  </Link>
+                  </label>
                 </div>
               ))}
             </div>
@@ -195,8 +213,8 @@ function Accordion({ title, options, filter }) {
                 key={filterItem.id}
                 className="flex items-center justify-start gap-2 "
               >
-                <Link
-                  href={`/filter?id=${filterItem.id}`}
+                <label
+                  onClick={() => handleFilterClick(filterItem.id)}
                   className="flex items-center justify-start gap-2 "
                 >
                   <input type="checkbox" />
@@ -206,7 +224,7 @@ function Accordion({ title, options, filter }) {
                   <h1 className="font-semibold text-slate-600">
                     &#40;{filterItem.id}&#41;
                   </h1>
-                </Link>
+                </label>
               </div>
             ))}
           </div>
