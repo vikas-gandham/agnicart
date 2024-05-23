@@ -5,21 +5,54 @@ import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-function Accordion({ title, options, filter }) {
+function Accordion({ title, options, filter, isChecked }) {
   const router = useRouter();
 
-  const handleFilterClick = (id) => {
-    const query = { ...router.query };
-
-    query[id] = !query[id];
-
-    if (!query[id]) {
-      delete query[id];
+  const handleFilterClick = (id, checked) => {
+    if (id === undefined || id === null) {
+      console.error("ID is undefined or null");
+      return;
     }
 
-    router.push(`/filter?id=${id}`, undefined, {
-      shallow: true,
-    });
+    const currentUrl = router.asPath;
+
+    const url = new URL(currentUrl, "http://localhost:3000/variant");
+    let idParams = url.searchParams.getAll("id");
+    console.log("Checkbox state: ", checked);
+
+    // Check if the ID is already present in the parameters
+    const idAlreadyExists = idParams.includes(id);
+
+    if (checked && !idAlreadyExists) {
+      // Add the ID to the parameters if it's checked and not already present
+      idParams.push(id);
+    } else if (!checked && idAlreadyExists) {
+      // Remove the ID from the parameters if it's unchecked and already present
+      idParams = idParams.filter((param) => param !== id);
+    }
+
+    // Clear existing ID parameters
+    url.searchParams.delete("id");
+
+    // Append each ID from the updated idParams array
+    idParams.forEach((param) => url.searchParams.append("id", param));
+
+    // If there are no IDs left, remove the entire id parameter from the URL
+    if (idParams.length === 0) {
+      url.searchParams.delete("id");
+    }
+
+    // Push the updated URL to the router
+    router.push(url.pathname + url.search);
+
+    // const query = { ...router.query };
+    // query[id] = !query[id];
+    // if (!query[id]) {
+    //   delete query[id];
+    // }
+    // router.push(`/filter?id=${id}`, undefined, {
+    //   shallow: true,
+    // });
   };
 
   const [toggle, setToggle] = useState(true);
@@ -86,10 +119,7 @@ function Accordion({ title, options, filter }) {
             <div className="flex flex-col  items-start justify-center gap-4 overflow-y-auto max-h-[150px] w-full scrollbar-thin scrollbar-webkit pt-48 pb-2">
               {options.map((filterItem) => (
                 <div key={filterItem.id}>
-                  <label
-                    onClick={() => handleFilterClick(filterItem.id)}
-                    className="flex items-center justify-start gap-2 "
-                  >
+                  <label className="flex items-center justify-start gap-2 ">
                     <input type="checkbox" />
                     <h1 className=" uppercase font-semibold text-slate-600">
                       {filterItem.name}
@@ -154,10 +184,12 @@ function Accordion({ title, options, filter }) {
                   className="flex items-center justify-start gap-2 "
                 >
                   <label
-                    onClick={() => handleFilterClick(filterItem.id)}
+                    onClick={(e) =>
+                      handleFilterClick(filterItem.id, e.target.checked)
+                    }
                     className="flex items-center justify-start gap-2 cursor-pointer "
                   >
-                    <input type="checkbox" />
+                    <input type="checkbox" checked={isChecked} />
 
                     <span className=" uppercase font-semibold text-slate-600">
                       {filterItem.name}
@@ -184,10 +216,7 @@ function Accordion({ title, options, filter }) {
                   key={filterItem.id}
                   className="flex items-center justify-start gap-2 "
                 >
-                  <label
-                    onClick={() => handleFilterClick(filterItem.id)}
-                    className="flex items-center justify-start gap-2 "
-                  >
+                  <label className="flex items-center justify-start gap-2 ">
                     <input type="checkbox" />
                     <h1 className=" uppercase font-semibold text-slate-600">
                       {filterItem.name}
@@ -213,10 +242,7 @@ function Accordion({ title, options, filter }) {
                 key={filterItem.id}
                 className="flex items-center justify-start gap-2 "
               >
-                <label
-                  onClick={() => handleFilterClick(filterItem.id)}
-                  className="flex items-center justify-start gap-2 "
-                >
+                <label className="flex items-center justify-start gap-2 ">
                   <input type="checkbox" />
                   <h1 className=" uppercase font-semibold text-slate-600">
                     {filterItem.name}
@@ -233,4 +259,15 @@ function Accordion({ title, options, filter }) {
     </div>
   );
 }
+
+export async function getServerSideProps(context) {
+  const { query } = context;
+  const isChecked = query.checked === "true"; // Convert string to boolean
+  return {
+    props: {
+      isChecked,
+    },
+  };
+}
+
 export default Accordion;
