@@ -15,6 +15,7 @@ function Accordion({ title, options, filter, isChecked }) {
     }
 
     const currentUrl = router.asPath;
+    console.log("current Url: ", currentUrl);
 
     const url = new URL(currentUrl, "http://localhost:3000/variant");
     let idParams = url.searchParams.getAll("id");
@@ -29,10 +30,10 @@ function Accordion({ title, options, filter, isChecked }) {
     } else if (!checked && idAlreadyExists) {
       // Remove the ID from the parameters if it's unchecked and already present
       idParams = idParams.filter((param) => param !== id);
+      url.searchParams.delete("id");
     }
 
     // Clear existing ID parameters
-    url.searchParams.delete("id");
 
     // Append each ID from the updated idParams array
     idParams.forEach((param) => url.searchParams.append("id", param));
@@ -271,3 +272,106 @@ export async function getServerSideProps(context) {
 }
 
 export default Accordion;
+
+// const FiltersComponent = () => {
+//   const router = useRouter();
+//   const { query } = router;
+
+//   const addFilter = (filterName, filterValue) => {
+//     const currentValues = query[filterName] ? [].concat(query[filterName]) : [];
+//     const newValues = [...new Set([...currentValues, filterValue])]; // Ensure unique values
+//     router.push({
+//       pathname: router.pathname,
+//       query: { ...query, [filterName]: newValues },
+//     });
+//   };
+
+//   const removeFilter = (filterName, filterValue) => {
+//     const currentValues = query[filterName] ? [].concat(query[filterName]) : [];
+//     const newValues = currentValues.filter(value => value !== filterValue);
+//     const newQuery = { ...query, [filterName]: newValues };
+//     if (newValues.length === 0) {
+//       delete newQuery[filterName];
+//     }
+//     router.push({
+//       pathname: router.pathname,
+//       query: newQuery,
+//     });
+//   };
+
+//   const handleCheckboxChange = (event) => {
+//     const { name, checked, value } = event.target;
+//     if (checked) {
+//       addFilter(name, value);
+//     } else {
+//       removeFilter(name, value);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <label>
+//         <input
+//           type="checkbox"
+//           name="filter1"
+//           value="value1"
+//           onChange={handleCheckboxChange}
+//           checked={query.filter1 && query.filter1.includes('value1')}
+//         />
+//         Filter 1 - Value 1
+//       </label>
+//       <label>
+//         <input
+//           type="checkbox"
+//           name="filter1"
+//           value="value2"
+//           onChange={handleCheckboxChange}
+//           checked={query.filter1 && query.filter1.includes('value2')}
+//         />
+//         Filter 1 - Value 2
+//       </label>
+//       <label>
+//         <input
+//           type="checkbox"
+//           name="filter2"
+//           value="value1"
+//           onChange={handleCheckboxChange}
+//           checked={query.filter2 && query.filter2.includes('value1')}
+//         />
+//         Filter 2 - Value 1
+//       </label>
+//       {/* Add more filters as needed */}
+//     </div>
+//   );
+// };
+
+// -------------or-----------------
+
+// const handleCheckboxChange = (event, filterName, filterValue) => {
+//   const { checked } = event.target;
+//   if (checked) {
+//     addFilter(filterName, filterValue);
+//   } else {
+//     removeFilter(filterName, filterValue);
+//   }
+// };
+
+// return (
+//   <div>
+//     {filters.map((filter, index) => (
+//       <label key={index}>
+//         <input
+//           type="checkbox"
+//           name={filter.name}
+//           value={filter.value}
+//           onChange={(event) => handleCheckboxChange(event, filter.name, filter.value)}
+//           checked={query[filter.name] && query[filter.name].includes(filter.value)}
+//         />
+//         {filter.label}
+//       </label>
+//     ))}
+//   </div>
+// );
+// };
+
+// export default FiltersComponent;
